@@ -14,4 +14,8 @@ public class Client {
     private Long id;
     private String name;
     private String prenom;
+    private String email;
+    private String CIN;
+    private Double soldeBancaire;
+    private Double plafondCharges;
 }
