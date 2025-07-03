@@ -29,7 +29,7 @@ public class CategorieService {
 
     public Categorie update(Long id, Categorie updatedCategorie) {
         return repository.findById(id).map(c -> {
-            c.setNomFr(updatedCategorie.getNomFr());
+            c.setNomAng(updatedCategorie.getNomAng());
             return repository.save(c);
         }).orElseThrow(() -> new RuntimeException("Catégorie non trouvée"));
     }
