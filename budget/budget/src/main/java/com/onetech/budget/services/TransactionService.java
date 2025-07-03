@@ -1,8 +1,10 @@
 package com.onetech.budget.services;
 
 import com.onetech.budget.DTO.TransactionRequestDTO;
+import com.onetech.budget.models.Categorie;
 import com.onetech.budget.models.Client;
 import com.onetech.budget.models.Transaction;
+import com.onetech.budget.repositories.CategorieRepository;
 import com.onetech.budget.repositories.ClientRepository;
 import com.onetech.budget.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +16,13 @@ import java.util.List;
 public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final ClientRepository clientRepository;
+    private final CategorieRepository categorieRepository;
 
     @Autowired
-    public TransactionService(TransactionRepository transactionRepository, ClientRepository clientRepository) {
+    public TransactionService(TransactionRepository transactionRepository, ClientRepository clientRepository, CategorieRepository categorieRepository) {
         this.transactionRepository = transactionRepository;
         this.clientRepository = clientRepository;
+        this.categorieRepository = categorieRepository;
     }
 
     public Transaction saveTransaction(TransactionRequestDTO dto) {
@@ -31,6 +35,17 @@ public class TransactionService {
         transaction.setDateValeur(dto.getDateValeur());
         transaction.setClient(client);
 
+        return transactionRepository.save(transaction);
+    }
+
+    public Transaction assignCategorieToTransaction(Long transactionId, Long categorieId) {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("Transaction non trouvée"));
+
+        Categorie categorie = categorieRepository.findById(categorieId)
+                .orElseThrow(() -> new RuntimeException("Catégorie non trouvée"));
+
+        transaction.setCategorie(categorie);
         return transactionRepository.save(transaction);
     }
 

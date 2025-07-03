@@ -5,20 +5,18 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-@Data
 @Entity
-public class Transaction {
+@Data
+public class Historique {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Double montant;
-    private LocalDate dateOpertation;
-    private LocalDate dateValeur;
+    private LocalDate date;
+    @OneToOne
+    private Categorie categorie;
     @ManyToOne
     private Client client;
-
-    @ManyToOne
-    private  Categorie categorie;
-
+    private boolean depassement;
+    private Double valeurDepassement;
 
 }

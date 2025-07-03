@@ -34,4 +34,12 @@ public class TransactionController {
         this.transactionService.deleteById(id);
     }
 
+    @PutMapping("/assignCategoryToTransaction/{transactionId}/categorie/{categorieId}")
+    public ResponseEntity<Transaction> affecterCategorie(
+            @PathVariable Long transactionId,
+            @PathVariable Long categorieId) {
+        Transaction updated = transactionService.assignCategorieToTransaction(transactionId, categorieId);
+        return ResponseEntity.ok(updated);
+    }
+
 }
