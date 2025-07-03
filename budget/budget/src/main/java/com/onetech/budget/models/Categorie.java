@@ -1,7 +1,9 @@
 package com.onetech.budget.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
 public class Categorie {
 
@@ -9,29 +11,8 @@ public class Categorie {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nom;
+    private String nomFr;
+    private String nomAr;
 
-    // Constructeurs
-    public Categorie() {}
 
-    public Categorie(String nom) {
-        this.nom = nom;
-    }
-
-    // Getters et Setters
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getNom() {
-        return nom;
-    }
-
-    public void setNom(String nom) {
-        this.nom = nom;
-    }
 }

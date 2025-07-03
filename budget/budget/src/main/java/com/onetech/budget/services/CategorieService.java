@@ -29,10 +29,11 @@ public class CategorieService {
 
     public Categorie update(Long id, Categorie updatedCategorie) {
         return repository.findById(id).map(c -> {
-            c.setNom(updatedCategorie.getNom());
+            c.setNomFr(updatedCategorie.getNomFr());
             return repository.save(c);
         }).orElseThrow(() -> new RuntimeException("Catégorie non trouvée"));
     }
+
 
     public void delete(Long id) {
         repository.deleteById(id);
