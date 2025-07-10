@@ -16,8 +16,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-
 @Component
 @RequiredArgsConstructor
 public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
@@ -31,6 +29,9 @@ public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken>
                 jwtGrantedAuthoritiesConverter.convert(jwt).stream(),
                 extractResourceRoles(jwt).stream()
         ).collect(Collectors.toSet());
+
+        System.out.println("Authorities: " + authorities);
+        System.out.println("Principal: " + getPrincipalClaimName(jwt));
 
         return new JwtAuthenticationToken(jwt, authorities, getPrincipalClaimName(jwt));
     }

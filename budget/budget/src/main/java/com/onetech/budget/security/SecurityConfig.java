@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -22,8 +22,15 @@ public class SecurityConfig {
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/categorie").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole(ADMIN)
+                        // .requestMatchers(HttpMethod.POST, "/api/categories").permitAll()
+                        // .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
+                        //.requestMatchers(HttpMethod.POST, "/api/categories").hasRole(USER)
+                        .requestMatchers("/api/categorie").hasRole(USER)
+
+                        //    .requestMatchers(HttpMethod.DELETE, "/api/categories").hasRole(USER)
+
+                        //.requestMatchers(HttpMethod.GET, "/api/user/**").hasRole(USER)
+                        //.requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole(ADMIN)
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter)))

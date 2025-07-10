@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categorie")
-@CrossOrigin(origins = "*") // pour autoriser l’accès depuis Angular ou autre
+//@CrossOrigin(origins = "*") // pour autoriser l’accès depuis Angular ou autre
 public class CategorieController {
 
     private final CategorieService service;
