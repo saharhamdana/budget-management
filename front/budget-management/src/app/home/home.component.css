@@ -1,0 +1,35 @@
+/* Brand colors */
+:root {
+  --primary-color: #082c6c;
+  --accent-color: #f06c14;
+}
+
+/* Card styling */
+.custom-card {
+  border: 1px solid var(--primary-color);
+  box-shadow: 0 0 10px rgba(8, 44, 108, 0.1);
+  border-radius: 12px;
+}
+
+/* Section headers */
+.section-title {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+/* Accent buttons */
+.btn-accent {
+  background-color: var(--accent-color);
+  border: none;
+}
+
+.btn-accent:hover {
+  background-color: #d65b10;
+}
+
+/* Table tweaks */
+.table th {
+  text-transform: capitalize;
+  font-weight: 600;
+} 

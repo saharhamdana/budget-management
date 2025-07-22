@@ -8,6 +8,8 @@ import com.onetech.budget.repositories.CategorieRepository;
 import com.onetech.budget.repositories.ClientRepository;
 import com.onetech.budget.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,14 +28,19 @@ public class TransactionService {
     }
 
     public Transaction saveTransaction(TransactionRequestDTO dto) {
-        Client client = clientRepository.findById(dto.getClientId())
+       /* Client client = clientRepository.findById(dto.getClientId())
                 .orElseThrow(() -> new RuntimeException("Client non trouvé avec l'id " + dto.getClientId()));
+*/
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = jwt.getSubject(); // 'sub' contient généralement l'ID utilisateur
 
         Transaction transaction = new Transaction();
         transaction.setMontant(dto.getMontant());
         transaction.setDateOpertation(dto.getDateOpertation());
         transaction.setDateValeur(dto.getDateValeur());
-        transaction.setClient(client);
+        transaction.setClient(userId);
+
+        //transaction.setClient(client);
 
         return transactionRepository.save(transaction);
     }

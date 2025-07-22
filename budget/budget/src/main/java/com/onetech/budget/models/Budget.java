@@ -1,28 +1,29 @@
 package com.onetech.budget.models;
 
 import jakarta.persistence.*;
-import lombok.*;
-import java.math.BigDecimal;
+import lombok.Data;
 
-@Entity
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity
 public class Budget {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private BigDecimal montant;
+    private Double amountPerMonth;
 
-    private String periode; // exemple : "2025-07"
-
-    @ManyToOne
-    @JoinColumn(name = "categorie_id")
+    @OneToOne
+    //@JoinColumn(name = "categorie_id")
     private Categorie categorie;
 
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private Client client;
+
+    private String userId;
+    private Double realAmount;
+
+    @Column(name = "depassement")
+    private Boolean depassement;
+
+    @Column(name = "valeur_depassement")
+    private Double valeurDepassement;
+
 }

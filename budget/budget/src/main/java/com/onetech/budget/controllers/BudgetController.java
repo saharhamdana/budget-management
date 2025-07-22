@@ -3,40 +3,59 @@ package com.onetech.budget.controllers;
 import com.onetech.budget.models.Budget;
 import com.onetech.budget.services.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/budgets")
-@CrossOrigin(origins = "*")
 public class BudgetController {
 
+    private final BudgetService budgetService;
+
     @Autowired
-    private BudgetService budgetService;
+    public BudgetController(BudgetService budgetService) {
+        this.budgetService = budgetService;
+    }
 
     @PostMapping
-    public Budget create(@RequestBody Budget budget) {
-        return budgetService.save(budget);
+    public ResponseEntity<?> createBudget(@RequestBody Budget budget) {
+        try {
+            Budget saved = budgetService.saveBudget(budget);
+            return ResponseEntity.ok(saved);
+        } catch (Exception e) {
+            // Log dans la console
+            e.printStackTrace();
+
+            // Retourner un message d'erreur au client
+            return ResponseEntity.status(500).body("Erreur lors de la création du budget : " + e.getMessage());
+        }
+    }
+
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Budget> updateBudget(@PathVariable Long id, @RequestBody Budget budget) {
+        Budget updated = budgetService.updateBudget(id, budget);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping
-    public List<Budget> getAll() {
-        return budgetService.getAll();
+    public List<Budget> getUserBudgets() {
+        return budgetService.getBudgetsForCurrentUser();
     }
 
     @GetMapping("/{id}")
-    public Budget getById(@PathVariable Long id) {
-        return budgetService.getById(id);
-    }
-
-    @PutMapping("/{id}")
-    public Budget update(@PathVariable Long id, @RequestBody Budget budget) {
-        return budgetService.update(id, budget);
+    public ResponseEntity<Budget> getBudgetById(@PathVariable Long id) {
+        Budget budget = budgetService.findById(id);
+        if (budget == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(budget);
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        budgetService.delete(id);
+    public void deleteBudget(@PathVariable Long id) {
+        budgetService.deleteById(id);
     }
 }

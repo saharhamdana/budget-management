@@ -1,0 +1,66 @@
+/* Navbar background and colors */
+.custom-navbar {
+  background-color: #082c6c;
+}
+
+/* Navbar links */
+.custom-navbar .nav-link {
+  color: #ffffff;
+  transition: color 0.3s ease;
+}
+
+.custom-navbar .nav-link:hover,
+.custom-navbar .nav-link:focus {
+  color: #f06c14;
+}
+
+/* Active link */
+.custom-navbar .nav-link.active {
+  color: #f06c14;
+  font-weight: 600;
+}
+
+/* Disabled link */
+.custom-navbar .nav-link.disabled {
+  color: #bbbbbb;
+  cursor: not-allowed;
+}
+
+/* Dropdown menu */
+.custom-navbar .dropdown-menu {
+  border-radius: 6px;
+  border: 1px solid #082c6c;
+}
+
+.custom-navbar .dropdown-menu .dropdown-item {
+  color: #082c6c;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.custom-navbar .dropdown-menu .dropdown-item:hover,
+.custom-navbar .dropdown-menu .dropdown-item:focus {
+  background-color: #f06c14;
+  color: #fff;
+}
+
+/* Navbar-toggler */
+.custom-toggler {
+  border-color: #f06c14;
+}
+
+.custom-toggler .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(240,108,20, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Accent button */
+.btn-accent {
+  background-color: #f06c14;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+  background-color: #d65b10;
+  color: #fff;
+}

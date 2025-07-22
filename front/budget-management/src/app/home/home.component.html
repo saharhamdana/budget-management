@@ -1,0 +1,61 @@
+<app-navbar></app-navbar>
+
+<div class="container py-4">
+
+  <!-- Upload Section -->
+  <div class="card custom-card mb-4">
+    <div class="card-body">
+      <h5 class="section-title mb-3">📤 Upload Excel File</h5>
+      <div class="input-group">
+        <input type="file" class="form-control" id="inputGroupFile02" (change)="handleFileInput($event)" accept=".xlsx, .xls" />
+        <label class="input-group-text btn-accent text-white" for="inputGroupFile02">Upload</label>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Section -->
+  <div class="card custom-card mb-4">
+    <div class="card-body">
+      <h5 class="section-title mb-3">🔍 Filters</h5>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Filter by name" [(ngModel)]="filterName"(ngModelChange)="filterTransactions()" />
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Global filter..." [(ngModel)]="globalFilter" (ngModelChange)="filterTransactions()" />
+        </div>
+        <div class="col-md-4 text-end">
+          <button type="button" class="btn btn-accent text-white" (click)="filterTransactions()">Apply Filter</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transactions Table -->
+  <div *ngIf="filteredTransactions.length > 0; else noData" class="card custom-card">
+    <div class="card-body">
+      <h5 class="section-title mb-3">📊 Transactions</h5>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead style="background-color: #082c6c; color: #fff;">
+            <tr>
+              <th *ngFor="let key of objectKeys(filteredTransactions[0])">{{ key }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of filteredTransactions">
+              <td *ngFor="let key of objectKeys(row)">{{ row[key] }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noData>
+    <div class="alert alert-info text-center">
+      No data loaded.
+    </div>
+  </ng-template>
+
+</div>

@@ -9,5 +9,5 @@ public class TransactionRequestDTO {
     private Double montant;
     private LocalDate dateOpertation;
     private LocalDate dateValeur;
-    private Long clientId;
+    private String clientId;
 }

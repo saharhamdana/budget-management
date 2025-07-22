@@ -14,8 +14,8 @@ public class Transaction {
     private Double montant;
     private LocalDate dateOpertation;
     private LocalDate dateValeur;
-    @ManyToOne
-    private Client client;
+   // @ManyToOne
+    private String client;
 
     @ManyToOne
     private  Categorie categorie;
