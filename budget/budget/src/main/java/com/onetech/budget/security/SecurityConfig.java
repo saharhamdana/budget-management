@@ -8,6 +8,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration(proxyBeanMethods = false)
 @EnableWebSecurity
@@ -21,19 +27,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain configure(HttpSecurity http) throws Exception {
         return http
+                .cors()  // ✅ Active le support CORS
+                .and()
                 .authorizeHttpRequests(auth -> auth
-                        // .requestMatchers(HttpMethod.POST, "/api/categories").permitAll()
-                        // .requestMatchers(HttpMethod.GET, "/api/categories").permitAll()
-                        //.requestMatchers(HttpMethod.POST, "/api/categories").hasRole(USER)
                         .requestMatchers("/api/categorie").hasRole(USER)
-
-                        //    .requestMatchers(HttpMethod.DELETE, "/api/categories").hasRole(USER)
-
-                        //.requestMatchers(HttpMethod.GET, "/api/user/**").hasRole(USER)
-                        //.requestMatchers(HttpMethod.GET, "/api/admin/**").hasRole(ADMIN)
+                        .requestMatchers("/api/transactions/upload").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter)))
                 .build();
+    }
+
+    // ✅ Configuration CORS acceptant les appels depuis Angular
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }

@@ -17,6 +17,8 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.username = this.keycloak.getUsername();
+    console.log('Token:', this.keycloak.getToken());
+    localStorage.setItem('token', this.keycloak.getToken());
     console.log('Token parsed:', this.keycloak.keycloak.tokenParsed); // Pour debug
   }
 

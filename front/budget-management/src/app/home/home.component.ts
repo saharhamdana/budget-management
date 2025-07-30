@@ -4,73 +4,141 @@ import { FormsModule } from '@angular/forms';
 import { KeycloakService } from '../services/keycloack/keycloak.service';
 import { NavbarComponent } from '../navbar/navbar.component';
 import * as XLSX from 'xlsx';
+import { TransactionService } from '../services/transaction/transaction.service';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent],
+  imports: [CommonModule, FormsModule, NavbarComponent, HttpClientModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  filterName = '';
-  filterDate: string = '';
-  globalFilter = '';
   selectedFile: File | null = null;
-  transactions: any[] = [];
-  filteredTransactions: any[] = [];
 
-  constructor(private keycloakService: KeycloakService) {}
+  transactions: any[] = [];           // Toutes les transactions reçues du serveur
+  filteredTransactions: any[] = [];   // Transactions filtrées à afficher
 
-  handleFileInput(event: Event): void {
+  filterName: string = '';
+  globalFilter: string = '';
+
+  objectKeys = Object.keys;  // Pour récupérer les clés dynamiquement dans le template
+
+  constructor(private http: HttpClient) {}
+
+  // Gestion du fichier sélectionné
+  handleFileInput(event: Event) {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length) {
       this.selectedFile = input.files[0];
-      console.log('Selected file:', this.selectedFile.name);
-      
-      const reader = new FileReader();
-      
-      reader.onload = (e: any) => {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        
-        // Assuming you want the first sheet
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        
-        // Convert to JSON
-        this.transactions = XLSX.utils.sheet_to_json(worksheet);
-        this.filterTransactions();
-      };
-      
-      reader.readAsArrayBuffer(this.selectedFile);
+      this.uploadFile();  // Lancer directement l'upload
     }
   }
 
-  filterTransactions(): void {
-    this.filteredTransactions = this.transactions.filter(row => {
-      const nameMatch = this.filterName === '' || 
-        (row['Libellé Opération'] && 
-         row['Libellé Opération'].toLowerCase().includes(this.filterName.toLowerCase()));
-      
-      const dateMatch = this.filterDate === '' || 
-        (row['Date opération'] && 
-         row['Date opération'].toString().includes(this.filterDate));
-      
-      const globalMatch = this.globalFilter === '' || 
-        Object.values(row).some(
-          val => val != null && val.toString().toLowerCase().includes(this.globalFilter.toLowerCase())
-        );
-      
-      return nameMatch && dateMatch && globalMatch;
+  // uploadFile() {
+  //   if (!this.selectedFile) {
+  //     alert('Please select a file first.');
+  //     return;
+  //   }
+
+  //   const formData = new FormData();
+  //   formData.append('file', this.selectedFile, this.selectedFile.name);
+
+  //   // Récupération du token JWT stocké (adapter selon ta gestion du token)
+  //   const token = localStorage.getItem('token');
+
+  //   const headers = new HttpHeaders({
+  //     Authorization: `Bearer ${token}`
+  //   });
+  //   console.log('Bearerrrrr ', token);
+    
+  //   this.http.post<any[]>('http://localhost:8081/api/transactions/upload', formData, { headers })
+  //     .subscribe({
+  //       next: (data) => {
+  //         console.log('Upload success:', data);
+  //         this.transactions = data;
+  //         this.filteredTransactions = [...this.transactions]; // Initialiser sans filtre
+  //       },
+  //       error: (err) => {
+  //         console.error('Upload error:', err);
+  //         alert('Upload failed');
+  //       }
+  //     });
+  // }
+  loadAllTransactions() {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
+
+  this.http.get<any[]>('http://localhost:8081/api/transactions/all', { headers })
+    .subscribe({
+      next: (data) => {
+        this.transactions = data;
+        this.filteredTransactions = [...this.transactions];
+        console.log('Toutes les transactions chargées');
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des transactions :', err);
+      }
     });
+}
+
+  uploadFile() {
+  if (!this.selectedFile) {
+    alert('Please select a file first.');
+    return;
   }
 
-  objectKeys(obj: any): string[] {
-    return Object.keys(obj);
-  }
+  const formData = new FormData();
+  formData.append('file', this.selectedFile, this.selectedFile.name);
 
-  logout(): void {
-    this.keycloakService.logout();
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
+
+  this.http.post<any[]>('http://localhost:8081/api/transactions/upload', formData, { headers })
+    .subscribe({
+      next: (data) => {
+        if (data.length === 0) {
+          alert('✅ Aucune nouvelle transaction : toutes les références sont déjà enregistrées.');
+        } else {
+          alert(`✅ ${data.length} nouvelle(s) transaction(s) ajoutée(s).`);
+        }
+
+        // 🔁 Recharger toutes les transactions (anciennes + nouvelles)
+        this.loadAllTransactions();
+         // Initialiser sans filtre
+      },
+      error: (err) => {
+        console.error('Upload error:', err);
+        alert('❌ Échec de l\'upload');
+      }
+    });
+}
+
+
+
+  getDisplayKeys(obj: any): string[] {
+  return Object.keys(obj).filter(key => key !== 'client');
+}
+
+affecterCategorie(transaction: any) {
+  console.log('Affectation de catégorie à :', transaction);
+  // Tu peux ici ouvrir un modal, lancer une requête, etc.
+}
+
+  // Filtrage des transactions (par nom et global)
+  filterTransactions() {
+    this.filteredTransactions = this.transactions.filter(tx => {
+      const matchName = this.filterName ? (tx.name?.toLowerCase().includes(this.filterName.toLowerCase())) : true;
+
+      const globalText = JSON.stringify(tx).toLowerCase();
+      const matchGlobal = this.globalFilter ? globalText.includes(this.globalFilter.toLowerCase()) : true;
+
+      return matchName && matchGlobal;
+    });
   }
 }

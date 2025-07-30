@@ -17,4 +17,6 @@ keycloakService.init().then(() => {
       { provide: KeycloakService, useValue: keycloakService }
     ]
   });
+
+  
 });

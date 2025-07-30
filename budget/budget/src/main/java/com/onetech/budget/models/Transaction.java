@@ -14,6 +14,9 @@ public class Transaction {
     private Double montant;
     private LocalDate dateOpertation;
     private LocalDate dateValeur;
+    private String description;
+    @Column(unique = true, nullable = false)
+    private String reference;
    // @ManyToOne
     private String client;
 
