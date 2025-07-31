@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap');
+
 /* Brand colors */
 :root {
   --primary-color: #082c6c;
@@ -33,3 +35,54 @@
   text-transform: capitalize;
   font-weight: 600;
 } 
+
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f8f9fa;
+  color: #212529;
+}
+
+.section-title {
+  font-weight: 600;
+  color: #082c6c;
+}
+
+.btn-accent {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.btn-accent:hover {
+  background-color: #084298;
+}
+
+.custom-card {
+  border-radius: 0.75rem;
+  border: none;
+}
+.main-wrapper {
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+.sidebar {
+  width: 250px;
+  flex-shrink: 0;
+  background-color: #fff;
+  border-right: 1px solid #dee2e6;
+}
+
+.content-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    display: none; /* optionnel : cacher la sidebar sur mobile */
+  }
+}

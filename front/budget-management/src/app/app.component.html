@@ -331,6 +331,16 @@
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * End of Placeholder  * * * * * * * * * * * * -->
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
+<!-- Navbar -->
+<app-navbar></app-navbar>
 
+<div class="container-fluid d-flex">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
 
-<router-outlet />
+  <!-- Zone de contenu qui change selon la route -->
+  <main class="flex-grow-1 p-3">
+    <router-outlet></router-outlet> <!-- C’est ici que la page Transactions s’affichera -->
+  </main>
+</div>
+

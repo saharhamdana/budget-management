@@ -25,6 +25,7 @@ export class KeycloakService {
     return this.keycloak.token!;
   }
 
+  
   logout(): void {
     this.keycloak.logout();
   }

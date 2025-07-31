@@ -1,17 +1,46 @@
-<div class="sidebar bg-dark text-white vh-100 p-3 position-fixed">
-  <h4 class="mb-4">Budgify</h4>
-  <ul class="nav flex-column">
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white" routerLink="/dashboard">📊 Dashboard</a>
+<div class="sidebar d-flex flex-column p-3">
+  <!-- Logo -->
+  <a routerLink="/" class="sidebar-logo mb-4 text-decoration-none">
+    <i class="bi bi-box-seam-fill fs-4 me-2 text-orange"></i>
+    <span class="sidebar-title">Budgify</span>
+  </a>
+
+  <!-- Menu -->
+  <ul class="nav nav-pills flex-column mb-auto sidebar-menu">
+    <li>
+  <a routerLink="/home" routerLinkActive="active" class="nav-link">
+    <i class="bi bi-house-door me-2"></i> Home
+  </a>
+</li>
+    <li>
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-speedometer2 me-2"></i> Dashboard
+      </a>
     </li>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white" routerLink="/transactions">💳 Transactions</a>
+    <li>
+      <a routerLink="/transactions" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-cash-stack me-2"></i> Transactions
+      </a>
     </li>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white" routerLink="/budgets">📈 Budgets</a>
+    <li>
+      <a routerLink="/budget" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-pie-chart me-2"></i> Budget
+      </a>
     </li>
-    <li class="nav-item mb-2">
-      <a class="nav-link text-white" routerLink="/historiques">🕘 Historiques</a>
+    <li>
+      <a routerLink="/historiques" routerLinkActive="active" class="nav-link">
+        <i class="bi bi-clock-history me-2"></i> Historiques
+      </a>
     </li>
   </ul>
+
+  <hr class="text-white" />
+
+  <!-- User -->
+  <div class="mt-auto">
+    <a href="#" class="nav-link text-white">
+      <i class="bi bi-person-circle fs-5 me-2"></i>
+      <span class="d-none d-md-inline text-onetech-blue">{{ username }}</span>
+    </a>
+  </div>
 </div>

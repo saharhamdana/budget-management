@@ -6,11 +6,13 @@ import { NavbarComponent } from '../navbar/navbar.component';
 import * as XLSX from 'xlsx';
 import { TransactionService } from '../services/transaction/transaction.service';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { SidebarComponent } from "../sidebar/sidebar.component";
+import { RouterOutlet } from "../../../node_modules/@angular/router/router_module.d-Bx9ArA6K";
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, NavbarComponent, HttpClientModule],
+  imports: [CommonModule, FormsModule, SidebarComponent, HttpClientModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -72,7 +74,7 @@ export class HomeComponent {
     Authorization: `Bearer ${token}`
   });
 
-  this.http.get<any[]>('http://localhost:8081/api/transactions/all', { headers })
+  this.http.get<any[]>('http://localhost:8081/api/transactions/user', { headers })
     .subscribe({
       next: (data) => {
         this.transactions = data;
@@ -104,9 +106,10 @@ export class HomeComponent {
       next: (data) => {
         if (data.length === 0) {
           alert('✅ Aucune nouvelle transaction : toutes les références sont déjà enregistrées.');
-        } else {
-          alert(`✅ ${data.length} nouvelle(s) transaction(s) ajoutée(s).`);
         }
+        // } else {
+        //   alert(`✅ ${data.length} nouvelle(s) transaction(s) ajoutée(s).`);
+        // }
 
         // 🔁 Recharger toutes les transactions (anciennes + nouvelles)
         this.loadAllTransactions();
@@ -141,4 +144,12 @@ affecterCategorie(transaction: any) {
       return matchName && matchGlobal;
     });
   }
+  sidebarVisible: boolean = false;
+
+toggleSidebar() {
+  this.sidebarVisible = !this.sidebarVisible;
+}
+isMobile(): boolean {
+  return window.innerWidth < 768;
+}
 }

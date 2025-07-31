@@ -1,1 +1,30 @@
-<p>transactions works!</p>
+<div class="transactions-container">
+  <h2>Mes Transactions</h2>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Montant</th>
+        <th>Date Opération</th>
+        <th>Date Valeur</th>
+        <th>Description</th>
+        <th>Référence</th>
+        <th>Catégorie</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let transaction of transactions">
+        <td>{{ transaction.id }}</td>
+        <td>{{ transaction.montant | currency:'EUR' }}</td>
+        <td>{{ transaction.dateOpertation | date:'dd/MM/yyyy' }}</td>
+        <td>{{ transaction.dateValeur | date:'dd/MM/yyyy' }}</td>
+        <td>{{ transaction.description }}</td>
+        <td>{{ transaction.reference }}</td>
+        <td>{{ transaction.categorie?.nom || 'Non catégorisé' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="transactions.length === 0">Aucune transaction trouvée.</p>
+</div>

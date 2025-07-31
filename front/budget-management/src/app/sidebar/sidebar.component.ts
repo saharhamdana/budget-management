@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { KeycloakService } from '../services/keycloack/keycloak.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -7,6 +8,13 @@ import { RouterModule } from '@angular/router';
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css'
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
+ username: string = '';
+
+  constructor(private keycloakService: KeycloakService) {}
+
+  ngOnInit(): void {
+    this.username = this.keycloakService.getUsername();
+  }
 
 }

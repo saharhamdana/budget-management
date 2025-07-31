@@ -79,6 +79,13 @@ public class TransactionService {
         transactionRepository.deleteById(id);
         return transaction;
     }
+
+    public List<Transaction> findByClientConnected() {
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = jwt.getSubject();
+        return transactionRepository.findByClient(userId);
+    }
+
     /*
     public List<Transaction> processExcelFile(MultipartFile file) throws IOException {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -118,6 +125,8 @@ public class TransactionService {
         }
         return savedTransactions;
     }*/
+
+
     public List<Transaction> processExcelFile(MultipartFile file) throws IOException {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = jwt.getSubject();

@@ -1,17 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { KeycloakService } from '../services/keycloack/keycloak.service';
 
 @Component({
   selector: 'app-navbar',
-  imports: [],
   templateUrl: './navbar.component.html',
-  styleUrl: './navbar.component.css'
+  styleUrls: ['./navbar.component.css']
 })
+export class NavbarComponent implements OnInit {
+  username: string = '';
 
-export class NavbarComponent {
   constructor(private keycloakService: KeycloakService) {}
 
-  logout(): void {
-    this.keycloakService.logout();
+  ngOnInit(): void {
+    this.username = this.keycloakService.getUsername();
   }
+  logout(): void {
+  this.keycloakService.logout();
+}
+
 }

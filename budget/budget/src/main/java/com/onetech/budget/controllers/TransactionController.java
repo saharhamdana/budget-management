@@ -56,6 +56,11 @@ public class TransactionController {
         Transaction updated = transactionService.assignCategorieToTransaction(transactionId, categorieId);
         return ResponseEntity.ok(updated);
     }
+    @GetMapping("/user")
+    public ResponseEntity<List<Transaction>> getTransactionsForCurrentUser() {
+        List<Transaction> transactions = transactionService.findByClientConnected();
+        return ResponseEntity.ok(transactions);
+    }
 
 
 }

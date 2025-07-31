@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Transaction } from '../../models/transaction.model';
 
 
 @Injectable({
@@ -11,14 +12,19 @@ export class TransactionService {
 
   constructor(private http: HttpClient) {}
 
-  uploadFile(file: File) {
+  uploadFile(file: File): Observable<any> {
     const formData = new FormData();
     formData.append('file', file);
 
     return this.http.post(`${this.apiUrl}/upload`, formData);
   }
 
-  getAllTransactions(): Observable<any[]> {
-    return this.http.get<any[]>(this.apiUrl);
+  getAllTransactions(): Observable<Transaction[]> {
+    return this.http.get<Transaction[]>(this.apiUrl);
   }
+
+  getTransactionsByUser(): Observable<Transaction[]> {
+  return this.http.get<Transaction[]>('http://localhost:8081/api/transactions/user');
+}
+
 }

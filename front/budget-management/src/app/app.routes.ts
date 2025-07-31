@@ -13,3 +13,4 @@ export const routes: Routes = [
   { path: 'transactions', component: TransactionsComponent },
   { path: 'budgets', component: BudgetsComponent },
 ];
+
