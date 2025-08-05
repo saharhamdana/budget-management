@@ -21,7 +21,7 @@
         <td>{{ transaction.dateValeur | date:'dd/MM/yyyy' }}</td>
         <td>{{ transaction.description }}</td>
         <td>{{ transaction.reference }}</td>
-        <td>{{ transaction.categorie?.nom || 'Non catégorisé' }}</td>
+        <td>{{ transaction.categorie?.nomAng || 'Non catégorisé' }}</td>
       </tr>
     </tbody>
   </table>

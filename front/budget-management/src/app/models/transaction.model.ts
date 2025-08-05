@@ -1,3 +1,5 @@
+import { Categorie } from "./categorie.model";
+
 export interface Transaction {
   id: number;
   montant: number;
@@ -9,7 +11,3 @@ export interface Transaction {
   categorie?: Categorie; // facultatif si la catégorie peut être null
 }
 
-export interface Categorie {
-  id: number;
-  nom: string;
-}

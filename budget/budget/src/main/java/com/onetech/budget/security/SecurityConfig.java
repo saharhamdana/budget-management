@@ -30,8 +30,9 @@ public class SecurityConfig {
                 .cors()  // ✅ Active le support CORS
                 .and()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/categorie").hasRole(USER)
+                        .requestMatchers("/api/categorie").permitAll()
                         .requestMatchers("/api/transactions/upload").permitAll()
+                        .requestMatchers("/api/budgets/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtConverter)))

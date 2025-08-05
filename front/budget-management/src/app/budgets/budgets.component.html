@@ -1,1 +1,69 @@
-<p>budgets works!</p>
+<div class="d-flex flex-column min-vh-100 bg-light">
+  <!-- Wrapper de la page -->
+  <div class="main-wrapper d-flex flex-grow-1 " style="height: 100vh;">
+    
+    <!-- Sidebar -->
+    <div class="sidebar bg-dark text-white" style="width: 250px; min-height: 100vh; position: fixed; top: 0; left: 0; z-index: 1000;">
+      <app-sidebar></app-sidebar>
+    </div>
+
+    <!-- Main content -->
+    <div class="content-area flex-grow-1 overflow-auto p-4" style="margin-left: 250px;">
+      <div class="container budget-page mt-4">
+        <h2 class="page-title mb-4">Mes Budgets</h2>
+
+        <!-- Ajouter un budget -->
+        <div class="card p-4 mb-4 shadow-sm">
+          <h5 class="card-title">Ajouter un budget</h5>
+          <form (submit)="ajouterBudget()">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-4">
+                <label for="categorie" class="form-label">Catégorie</label>
+                    <select id="categorie" class="form-select rounded shadow-sm" [(ngModel)]="newBudget.categorie" name="categorie" required>
+  <option value="" disabled selected>Choisir une catégorie</option>
+  <option *ngFor="let cat of categories" [ngValue]="cat">
+    {{ cat.nomAng }} ({{ cat.nomAr }})
+  </option>
+</select>
+              </div>
+              <div class="col-md-4">
+                <label for="montant" class="form-label">Montant</label>
+                <input type="number" id="montant" class="form-control" [(ngModel)]="newBudget.montant" name="montant" required />
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-orange w-100" type="submit">Ajouter</button>
+              </div>
+            </div>
+          </form>
+        </div>
+        
+
+        <!-- Liste des budgets -->
+        <div class="card p-4 shadow-sm">
+          <h5 class="card-title">Liste des Budgets</h5>
+          <table class="table table-hover mt-3">
+  <thead class="table-blue text-white">
+    <tr>
+      <th>#</th>
+      <th>Catégorie</th>
+      <th>Montant</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let budget of budgets; let i = index">
+      <td>{{ i + 1 }}</td>
+      <td>{{ budget.categorie.nomAng }}</td>
+      <td>{{ budget.amountPerMonth }} TND</td>
+      <td>
+        <button class="btn btn-sm btn-outline-danger" (click)="supprimerBudget(budget.id)">Supprimer</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

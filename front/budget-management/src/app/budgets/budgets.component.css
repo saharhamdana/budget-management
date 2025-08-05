@@ -1,0 +1,44 @@
+.budget-page {
+  .page-title {
+    font-weight: 600;
+    color: #002e5d;
+  }
+
+  .btn-orange {
+    background-color: #f7901e;
+    color: white;
+    transition: 0.3s;
+    &:hover {
+      background-color: #e67e00;
+    }
+  }
+
+  .table-blue {
+    background-color: #002e5d;
+  }
+
+  table {
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card {
+    border-radius: 12px;
+    border: none;
+  }
+}
+.custom-select-modern {
+  border-radius: 12px;
+  border: 2px solid #4a90e2;
+  padding: 8px 12px;
+  font-size: 1.1rem;
+  background-color: #f0f8ff;
+  color: #333;
+  transition: border-color 0.3s ease;
+}
+
+.custom-select-modern:focus {
+  outline: none;
+  border-color: #1e3a8a;
+  box-shadow: 0 0 6px #1e3a8a;
+}

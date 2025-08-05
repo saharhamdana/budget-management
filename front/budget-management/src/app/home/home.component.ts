@@ -28,7 +28,24 @@ export class HomeComponent {
   objectKeys = Object.keys;  // Pour récupérer les clés dynamiquement dans le template
 
   constructor(private http: HttpClient) {}
+  ngOnInit(): void {
+      const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
 
+  this.http.get<any[]>('http://localhost:8081/api/transactions/user', { headers })
+    .subscribe({
+      next: (data) => {
+        this.transactions = data;
+        this.filteredTransactions = [...this.transactions];
+        console.log('Toutes les transactions chargées');
+      },
+      error: (err) => {
+        console.error('Erreur lors du chargement des transactions :', err);
+      }
+    });
+    }
   // Gestion du fichier sélectionné
   handleFileInput(event: Event) {
     const input = event.target as HTMLInputElement;
