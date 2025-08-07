@@ -27,4 +27,10 @@ export class TransactionService {
   return this.http.get<Transaction[]>('http://localhost:8081/api/transactions/user');
 }
 
+assignCategorieToTransaction(transactionId: number, categorieId: number): Observable<Transaction> {
+  return this.http.put<Transaction>(
+    `${this.apiUrl}/assignCategoryToTransaction/${transactionId}/categorie/${categorieId}`,
+    {}
+  );
+}
 }

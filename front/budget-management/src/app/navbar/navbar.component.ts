@@ -7,6 +7,8 @@ import { KeycloakService } from '../services/keycloack/keycloak.service';
   styleUrls: ['./navbar.component.css']
 })
 export class NavbarComponent implements OnInit {
+
+  
   username: string = '';
 
   constructor(private keycloakService: KeycloakService) {}

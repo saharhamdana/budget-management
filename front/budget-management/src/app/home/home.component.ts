@@ -8,11 +8,12 @@ import { TransactionService } from '../services/transaction/transaction.service'
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { RouterOutlet } from "../../../node_modules/@angular/router/router_module.d-Bx9ArA6K";
+import * as bootstrap from 'bootstrap';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, SidebarComponent, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -24,28 +25,34 @@ export class HomeComponent {
 
   filterName: string = '';
   globalFilter: string = '';
+  newTransactions: any[] = []; 
+  categories: any[] = [];
+  selectedTransactionId: number | null = null;
+  selectedCategorieId: number | null = null;
 
   objectKeys = Object.keys;  // Pour récupérer les clés dynamiquement dans le template
 
   constructor(private http: HttpClient) {}
-  ngOnInit(): void {
-      const token = localStorage.getItem('token');
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`
-  });
+ 
 
-  this.http.get<any[]>('http://localhost:8081/api/transactions/user', { headers })
-    .subscribe({
-      next: (data) => {
-        this.transactions = data;
-        this.filteredTransactions = [...this.transactions];
-        console.log('Toutes les transactions chargées');
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement des transactions :', err);
-      }
-    });
-    }
+
+
+  // const headers = new HttpHeaders({
+  //   Authorization: `Bearer ${token}`
+  // });
+
+  // this.http.get<any[]>('http://localhost:8081/api/transactions/user', { headers })
+  //   .subscribe({
+  //     next: (data) => {
+  //       this.transactions = data;
+  //       this.filteredTransactions = [...this.transactions];
+  //       console.log('Toutes les transactions chargées');
+  //     },
+  //     error: (err) => {
+  //       console.error('Erreur lors du chargement des transactions :', err);
+  //     }
+  //   });
+  //   }
   // Gestion du fichier sélectionné
   handleFileInput(event: Event) {
     const input = event.target as HTMLInputElement;
@@ -55,56 +62,103 @@ export class HomeComponent {
     }
   }
 
-  // uploadFile() {
-  //   if (!this.selectedFile) {
-  //     alert('Please select a file first.');
-  //     return;
-  //   }
+  ngOnInit(): void {
+  this.loadTransactions();
+  this.loadCategories();
+}
 
-  //   const formData = new FormData();
-  //   formData.append('file', this.selectedFile, this.selectedFile.name);
-
-  //   // Récupération du token JWT stocké (adapter selon ta gestion du token)
-  //   const token = localStorage.getItem('token');
-
-  //   const headers = new HttpHeaders({
-  //     Authorization: `Bearer ${token}`
-  //   });
-  //   console.log('Bearerrrrr ', token);
-    
-  //   this.http.post<any[]>('http://localhost:8081/api/transactions/upload', formData, { headers })
-  //     .subscribe({
-  //       next: (data) => {
-  //         console.log('Upload success:', data);
-  //         this.transactions = data;
-  //         this.filteredTransactions = [...this.transactions]; // Initialiser sans filtre
-  //       },
-  //       error: (err) => {
-  //         console.error('Upload error:', err);
-  //         alert('Upload failed');
-  //       }
-  //     });
-  // }
-  loadAllTransactions() {
+loadTransactions() {
   const token = localStorage.getItem('token');
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`
-  });
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
 
   this.http.get<any[]>('http://localhost:8081/api/transactions/user', { headers })
     .subscribe({
       next: (data) => {
         this.transactions = data;
         this.filteredTransactions = [...this.transactions];
-        console.log('Toutes les transactions chargées');
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des transactions :', err);
+        console.error('Erreur chargement transactions :', err);
       }
     });
 }
 
-  uploadFile() {
+loadCategories() {
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+  this.http.get<any[]>('http://localhost:8081/api/categorie', { headers }) // adapte l'URL si besoin
+    .subscribe({
+      next: (data) => {
+        this.categories = data;
+      },
+      error: (err) => {
+        console.error('Erreur chargement catégories :', err);
+      }
+    });
+}
+
+affecterCategorie(transaction: any) {
+  this.selectedTransactionId = transaction.id;
+  this.selectedCategorieId = null;
+  const modal = new bootstrap.Modal(document.getElementById('categorieModal')!);
+  modal.show();
+}
+
+confirmerAffectation() {
+  if (!this.selectedTransactionId || !this.selectedCategorieId) return;
+
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+  this.http.put<any>(
+    `http://localhost:8081/api/transactions/assignCategoryToTransaction/${this.selectedTransactionId}/categorie/${this.selectedCategorieId}`,
+    {},
+    { headers }
+  ).subscribe({
+    next: () => {
+      alert('✅ Catégorie affectée avec succès !');
+      this.selectedTransactionId = null;
+      this.selectedCategorieId = null;
+      this.loadTransactions();
+
+      // Fermer le modal
+      const modalEl = document.getElementById('categorieModal');
+      if (modalEl) bootstrap.Modal.getInstance(modalEl)?.hide();
+    },
+    error: (err) => {
+      console.error('Erreur assignation catégorie :', err);
+      alert('❌ Échec lors de l\'affectation.');
+    }
+  });
+}
+
+confirmCategorieAffectation(event: Event) {
+  const selectElement = event.target as HTMLSelectElement;
+  const categorieId = selectElement.value;
+  console.log('Catégorie sélectionnée :', categorieId);
+  if (!this.selectedTransactionId) return;
+
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+  this.http.put<any>(
+    `http://localhost:8081/api/transaction/assignCategoryToTransaction/${this.selectedTransactionId}/categorie/${categorieId}`,
+    {},
+    { headers }
+  ).subscribe({
+    next: () => {
+      alert('✅ Catégorie affectée avec succès !');
+      this.selectedTransactionId = null;
+      this.loadTransactions(); // pour recharger les données avec la catégorie affectée
+    },
+    error: (err) => {
+      console.error('Erreur assignation catégorie :', err);
+      alert('❌ Échec lors de l\'affectation de la catégorie.');
+    }
+  });
+}
+ uploadFile() {
   if (!this.selectedFile) {
     alert('Please select a file first.');
     return;
@@ -119,37 +173,29 @@ export class HomeComponent {
   });
 
   this.http.post<any[]>('http://localhost:8081/api/transactions/upload', formData, { headers })
-    .subscribe({
-      next: (data) => {
-        if (data.length === 0) {
-          alert('✅ Aucune nouvelle transaction : toutes les références sont déjà enregistrées.');
-        }
-        // } else {
-        //   alert(`✅ ${data.length} nouvelle(s) transaction(s) ajoutée(s).`);
-        // }
-
-        // 🔁 Recharger toutes les transactions (anciennes + nouvelles)
-        this.loadAllTransactions();
-         // Initialiser sans filtre
-      },
-      error: (err) => {
-        console.error('Upload error:', err);
-        alert('❌ Échec de l\'upload');
+  .subscribe({
+    next: (data) => {
+      if (data.length === 0) {
+        alert('✅ Aucune nouvelle transaction : toutes les références sont déjà enregistrées.');
+      } else {
+        alert(`✅ ${data.length} nouvelle(s) transaction(s) ajoutée(s).`);
+        this.filteredTransactions = [...data];
+        localStorage.setItem('newTransactions', JSON.stringify(data)); // 🧠 Stocker les nouvelles
       }
-    });
+    },
+    error: (err) => {
+      console.error('Upload error:', err);
+      alert('❌ Échec de l\'upload');
+    }
+  });
 }
+
 
 
 
   getDisplayKeys(obj: any): string[] {
   return Object.keys(obj).filter(key => key !== 'client');
-}
-
-affecterCategorie(transaction: any) {
-  console.log('Affectation de catégorie à :', transaction);
-  // Tu peux ici ouvrir un modal, lancer une requête, etc.
-}
-
+  }
   // Filtrage des transactions (par nom et global)
   filterTransactions() {
     this.filteredTransactions = this.transactions.filter(tx => {
@@ -169,4 +215,8 @@ toggleSidebar() {
 isMobile(): boolean {
   return window.innerWidth < 768;
 }
+
+
+
 }
+

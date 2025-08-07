@@ -8,6 +8,6 @@ export interface Transaction {
   description: string;
   reference: string;
   client: string;  // identifiant ou nom du client selon backend
-  categorie?: Categorie; // facultatif si la catégorie peut être null
+  categorie?: Categorie | null; // facultatif si la catégorie peut être null
 }
 

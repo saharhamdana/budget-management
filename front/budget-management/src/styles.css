@@ -94,3 +94,52 @@
 .badge {
   font-size: 0.6rem;
 }
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.container-fluid.d-flex {
+  height: 100vh;
+  overflow: hidden;
+}
+
+app-sidebar {
+  width: 250px;
+  min-height: 100vh;
+  background-color: #002c5f;
+  color: white;
+  flex-shrink: 0;
+}
+
+main {
+  overflow-y: auto;
+  background-color: #f8f9fa;
+}
+.fixed-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  z-index: 1000;
+  background-color: white;
+}
+
+.main-layout {
+  display: flex;
+  margin-top: 60px; /* hauteur de la navbar */
+  height: calc(100vh - 60px);
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #002c5f;
+  color: white;
+  flex-shrink: 0;
+}
+
+.content-area {
+  background-color: #f8f9fa;
+  overflow-y: auto;
+}

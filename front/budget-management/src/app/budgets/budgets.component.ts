@@ -11,7 +11,7 @@ import { Budget } from '../models/budget.model';
 
 @Component({
   selector: 'app-budgets',
-  imports: [FormsModule, CommonModule, SidebarComponent],
+  imports: [FormsModule, CommonModule],
   templateUrl: './budgets.component.html',
   styleUrl: './budgets.component.css'
 })

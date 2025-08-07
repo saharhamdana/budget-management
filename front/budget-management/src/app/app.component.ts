@@ -22,7 +22,7 @@ export class AppComponent implements OnInit {
   title = 'budget-management';
 
   constructor(private keycloak: KeycloakService) {}
-
+  
   ngOnInit(): void {
     this.username = this.keycloak.getUsername();
     console.log('Token:', this.keycloak.getToken());

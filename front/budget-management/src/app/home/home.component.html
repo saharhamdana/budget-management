@@ -1,14 +1,4 @@
-<div class="d-flex flex-column min-vh-100 bg-light">
-  <!-- Navbar -->
-  <!-- <app-navbar></app-navbar> -->
 
-  <!-- Page content wrapper -->
-  <div class="main-wrapper d-flex flex-grow-1 overflow-hidden">
-    
-    <!-- Sidebar (fixe à gauche) -->
-    <div class="sidebar bg-white border-end shadow-sm">
-      <app-sidebar></app-sidebar>
-    </div>
 
     <!-- Main content (scrollable) -->
     <div class="content-area flex-grow-1 overflow-auto p-4">
@@ -39,6 +29,7 @@
         </div>
       </div>
 
+      
       <!-- Transactions Table -->
       <div *ngIf="filteredTransactions.length > 0; else noData" class="card custom-card shadow-sm">
         <div class="card-body">
@@ -51,21 +42,22 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let row of filteredTransactions">
-                  <td *ngFor="let key of getDisplayKeys(row)">
-                    <ng-container *ngIf="key !== 'categorie'">
-                      {{ row[key] }}
-                    </ng-container>
-                    <ng-container *ngIf="key === 'categorie'">
-                      <ng-container *ngIf="!row[key]">
-                        <button class="btn btn-sm btn-outline-primary" (click)="affecterCategorie(row)">Affecter</button>
-                      </ng-container>
-                      <ng-container *ngIf="row[key]">
-                        {{ row[key] }}
-                      </ng-container>
-                    </ng-container>
-                  </td>
-                </tr>
+              <tr *ngFor="let row of filteredTransactions">
+  <td *ngFor="let key of getDisplayKeys(row)">
+    <ng-container *ngIf="key !== 'categorie'">
+      {{ row[key] }}
+    </ng-container>
+    <ng-container *ngIf="key === 'categorie'">
+      <ng-container *ngIf="!row[key]">
+  <button class="btn btn-sm btn-outline-primary" (click)="affecterCategorie(row)">Affecter</button>
+</ng-container>
+      <ng-container *ngIf="row[key]">
+        {{ row[key] }}
+      </ng-container>
+    </ng-container>
+  </td>
+</tr>
+
               </tbody>
             </table>
           </div>
@@ -77,5 +69,25 @@
         <div class="alert alert-info text-center">No data loaded.</div>
       </ng-template>
     </div>
+ 
+<!-- MODAL POUR L'AFFECTATION -->
+<div class="modal fade" id="categorieModal" tabindex="-1" aria-labelledby="categorieModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="categorieModalLabel">Affecter une catégorie</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <select class="form-select" [(ngModel)]="selectedCategorieId">
+          <option *ngFor="let cat of categories" [value]="cat.id">{{ cat.nomAng }}</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+        <button class="btn btn-primary" (click)="confirmerAffectation()">Confirmer</button>
+      </div>
+    </div>
   </div>
 </div>
+

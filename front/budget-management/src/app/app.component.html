@@ -335,12 +335,11 @@
 <app-navbar></app-navbar>
 
 <div class="container-fluid d-flex">
-  <!-- Sidebar -->
+  <!-- Sidebar à gauche -->
   <app-sidebar></app-sidebar>
 
-  <!-- Zone de contenu qui change selon la route -->
+  <!-- Zone centrale qui change selon la route -->
   <main class="flex-grow-1 p-3">
-    <router-outlet></router-outlet> <!-- C’est ici que la page Transactions s’affichera -->
+    <router-outlet></router-outlet>
   </main>
 </div>
-
