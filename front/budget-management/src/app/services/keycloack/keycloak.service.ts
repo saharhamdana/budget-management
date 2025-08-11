@@ -11,7 +11,7 @@ export class KeycloakService {
   init(): Promise<boolean> {
     this.keycloak = new Keycloak({
       url: 'http://localhost:9090',
-      realm: 'SpringSecurityKeyclocRealm',
+      realm: 'BudgifyApplication',
       clientId: 'my-app-client',
     });
 

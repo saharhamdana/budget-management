@@ -2,25 +2,30 @@ package com.onetech.budget.services;
 
 import com.onetech.budget.models.Budget;
 import com.onetech.budget.models.Categorie;
+import com.onetech.budget.models.Transaction;
 import com.onetech.budget.repositories.BudgetRepository;
 import com.onetech.budget.repositories.CategorieRepository;
+import com.onetech.budget.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class BudgetService {
 
     private final BudgetRepository budgetRepository;
     private final CategorieRepository categorieRepository;
+    private final TransactionRepository transactionRepository;
 
     @Autowired
-    public BudgetService(BudgetRepository budgetRepository, CategorieRepository categorieRepository) {
+    public BudgetService(BudgetRepository budgetRepository, CategorieRepository categorieRepository, TransactionRepository transactionRepository) {
         this.budgetRepository = budgetRepository;
         this.categorieRepository = categorieRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     public Budget saveBudget(Budget budget) {
@@ -91,4 +96,30 @@ public class BudgetService {
             }
         }
     }
+    public Budget updateRealAmountFromTransactions(Long budgetId) {
+        Budget budget = budgetRepository.findById(budgetId)
+                .orElseThrow(() -> new RuntimeException("Budget non trouvé"));
+
+        // Supposons que tu as une méthode pour récupérer les transactions par catégorie
+        List<Transaction> transactions = transactionRepository.findByCategorie(budget.getCategorie());
+
+        double sumTransactions = transactions.stream()
+                .mapToDouble(Transaction::getMontant)
+                .sum();
+
+        budget.setRealAmount(sumTransactions);
+
+        if (sumTransactions > budget.getAmountPerMonth()) {
+            budget.setDepassement(true);
+            budget.setValeurDepassement(sumTransactions - budget.getAmountPerMonth());
+        } else {
+            budget.setDepassement(false);
+            budget.setValeurDepassement(0.0);
+        }
+
+        return budgetRepository.save(budget);
+    }
+
+
+
 }

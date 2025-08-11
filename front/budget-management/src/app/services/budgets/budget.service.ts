@@ -25,4 +25,15 @@ export class BudgetService {
   deleteBudget(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+   updateBudget(id: number, montant: number, categorie: any) {
+  return this.http.put<Budget>(`${this.baseUrl}/${id}`, {
+    categorie: categorie,
+    amountPerMonth: montant
+  });
+}
+
+  updateRealAmountFromTransactions(budgetId: number): Observable<Budget> {
+    return this.http.put<Budget>(`${this.baseUrl}/${budgetId}/realAmount/updateFromTransactions`, {});
+  }
+
 }

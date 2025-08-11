@@ -24,4 +24,11 @@ public class Transaction {
     private  Categorie categorie;
 
 
+    public double getMontant() {
+        return montant;
+    }
+
+    public void setMontant(double montant) {
+        this.montant = montant;
+    }
 }

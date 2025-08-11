@@ -22,6 +22,7 @@ export class BudgetsComponent implements OnInit {
     montant: null
   };
   budgets: any[] = [];
+  budgetEnEdition: number | null = null;
 
   constructor(
     private categorieService: CategorieService,
@@ -84,4 +85,46 @@ export class BudgetsComponent implements OnInit {
       error: err => console.error('Erreur suppression:', err)
     });
   }
+
+  modifierBudget(budget: any) {
+  console.log('Budget à modifier :', budget);
+  this.newBudget.categorie = budget.categorie;
+  this.newBudget.montant = budget.amountPerMonth;
+  this.budgetEnEdition = budget.id;
+}
+
+  enableEdit(budget: Budget) {
+    budget.editing = true;
+  }
+
+  saveBudget(budget: Budget) {
+  if (budget.id === undefined) {
+    console.error("Impossible de mettre à jour un budget sans ID");
+    return;
+  }
+
+  this.budgetService.updateBudget(budget.id, budget.amountPerMonth, budget.categorie)
+    .subscribe({
+      next: (updated: Budget) => {
+        budget.amountPerMonth = updated.amountPerMonth;
+        budget.editing = false;
+      },
+      error: (err) => console.error(err)
+    });
+}
+   
+onUpdateRealAmount(budgetId: number) {
+    this.budgetService.updateRealAmountFromTransactions(budgetId).subscribe({
+      next: (updatedBudget) => {
+        // Met à jour la liste localement
+        this.budgets = this.budgets.map(b => b.id === updatedBudget.id ? updatedBudget : b);
+        alert('Montant réel mis à jour avec succès');
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Erreur lors de la mise à jour');
+      }
+    });
+  }
+
 }

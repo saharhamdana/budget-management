@@ -1,6 +1,9 @@
 package com.onetech.budget.controllers;
 
+import com.onetech.budget.DTO.RealAmountDTO;
 import com.onetech.budget.models.Budget;
+
+import com.onetech.budget.repositories.BudgetRepository;
 import com.onetech.budget.services.BudgetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,10 +16,12 @@ import java.util.List;
 public class BudgetController {
 
     private final BudgetService budgetService;
+    private final BudgetRepository budgetRepository;
 
     @Autowired
-    public BudgetController(BudgetService budgetService) {
+    public BudgetController(BudgetService budgetService,  BudgetRepository budgetRepository) {
         this.budgetService = budgetService;
+        this.budgetRepository = budgetRepository;
     }
 
     @PostMapping
@@ -58,4 +63,12 @@ public class BudgetController {
     public void deleteBudget(@PathVariable Long id) {
         budgetService.deleteById(id);
     }
+
+    @PutMapping("/{id}/realAmount/updateFromTransactions")
+    public ResponseEntity<Budget> updateRealAmountFromTransactions(@PathVariable Long id) {
+        Budget updatedBudget = budgetService.updateRealAmountFromTransactions(id);
+        return ResponseEntity.ok(updatedBudget);
+    }
+
+
 }

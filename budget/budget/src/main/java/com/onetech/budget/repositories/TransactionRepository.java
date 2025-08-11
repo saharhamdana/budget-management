@@ -1,5 +1,6 @@
 package com.onetech.budget.repositories;
 
+import com.onetech.budget.models.Categorie;
 import com.onetech.budget.models.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -11,4 +12,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     boolean existsByReference(String reference);
     boolean existsByReferenceAndClient(String reference, String client);
     List<Transaction> findByClient(String client);
+    List<Transaction> findByCategorie(Categorie categorie);
+
 }

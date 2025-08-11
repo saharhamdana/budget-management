@@ -31,30 +31,77 @@
         
 
         <!-- Liste des budgets -->
-        <div class="card p-4 shadow-sm">
-          <h5 class="card-title">Liste des Budgets</h5>
-          <table class="table table-hover mt-3">
-  <thead class="table-blue text-white">
-    <tr>
-      <th>#</th>
-      <th>Catégorie</th>
-      <th>Montant</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let budget of budgets; let i = index">
-      <td>{{ i + 1 }}</td>
-      <td>{{ budget.categorie.nomAng }}</td>
-      <td>{{ budget.amountPerMonth }} TND</td>
-      <td>
-        <button class="btn btn-sm btn-outline-danger" (click)="supprimerBudget(budget.id)">Supprimer</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="card p-4 shadow-sm">
+  <h5 class="card-title">Liste des Budgets</h5>
+  <table class="table table-hover mt-3 align-middle">
+    <thead class="table-blue text-white">
+      <tr>
+        <th>#</th>
+        <th>Catégorie</th>
+        <th>Montant Mensuel</th>
+        <th>Dépenses Réelles</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let budget of budgets; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ budget.categorie.nomAng }}</td>
 
-        </div>
+        <!-- Montant mensuel -->
+        <td>
+          <span *ngIf="!budget.editing">{{ budget.amountPerMonth }} TND</span>
+          <input *ngIf="budget.editing"
+                type="number"
+                [(ngModel)]="budget.amountPerMonth"
+                class="form-control form-control-sm"
+                style="width:100px; display:inline-block;" />
+        </td>
+
+        <!-- Progress bar des dépenses réelles -->
+        <td style="min-width: 200px;">
+          <div class="progress" style="height: 20px; border-radius: 10px; overflow: hidden;">
+            <div class="progress-bar"
+                role="progressbar"
+                [ngClass]="budget.realAmount > budget.amountPerMonth ? 'bg-danger' : 'bg-success'"
+                [style.width.%]="(budget.realAmount / budget.amountPerMonth) * 100">
+              {{ budget.realAmount }} TND
+            </div>
+          </div>
+          <small class="text-muted">
+            {{ ((budget.realAmount / budget.amountPerMonth) * 100) | number : '1.0-0' }}% du budget utilisé
+          </small>
+        </td>
+
+        <!-- Actions -->
+        <td>
+          <button *ngIf="!budget.editing"
+                  class="btn btn-sm btn-outline-primary me-2"
+                  (click)="enableEdit(budget)">
+            <i class="fas fa-edit"></i>
+          </button>
+
+          <button *ngIf="budget.editing"
+                  class="btn btn-sm btn-success me-2"
+                  (click)="saveBudget(budget)">
+            <i class="fas fa-check"></i>
+          </button>
+
+          <button class="btn btn-sm btn-outline-danger me-2"
+                  (click)="supprimerBudget(budget.id)">
+            <i class="fas fa-trash"></i>
+          </button>
+
+          <button class="btn btn-sm btn-outline-warning"
+                  (click)="onUpdateRealAmount(budget.id)">
+            🔄
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
       </div>
     </div>
   

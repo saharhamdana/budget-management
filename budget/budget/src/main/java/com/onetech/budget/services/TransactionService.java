@@ -131,6 +131,8 @@ public class TransactionService {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String userId = jwt.getSubject();
 
+        List<Transaction> newlyAddedTransactions = new ArrayList<>();
+
         try (InputStream inputStream = file.getInputStream()) {
             Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet sheet = workbook.getSheetAt(0);
@@ -139,8 +141,14 @@ public class TransactionService {
                 if (row.getRowNum() == 0) continue; // Skip header
 
                 String reference = getCellStringValue(row.getCell(2)); // Référence
+
                 if (transactionRepository.existsByReferenceAndClient(reference, userId)) {
                     continue; // ⛔ Déjà existante => skip
+                }
+
+                Double debit = getCellNumericValue(row.getCell(4));
+                if (debit == null) {
+                    continue; // ⛔ Ignore les lignes sans débit
                 }
 
                 Transaction transaction = new Transaction();
@@ -151,24 +159,14 @@ public class TransactionService {
                 transaction.setDescription(getCellStringValue(row.getCell(1)));
                 transaction.setReference(reference);
                 transaction.setDateValeur(parseBiatDate(getCellStringValue(row.getCell(3))));
-
-                // Débit/Crédit
-                Double debit = getCellNumericValue(row.getCell(4));
-                Double credit = getCellNumericValue(row.getCell(5));
-                if (debit != null) {
-                    transaction.setMontant(-debit);
-                } else if (credit != null) {
-                    transaction.setMontant(credit);
-                } else {
-                    continue; // ⛔ Pas de montant
-                }
+                transaction.setMontant(debit);  // Montant = valeur du débit
 
                 transactionRepository.save(transaction);
+                newlyAddedTransactions.add(transaction); // ✅ Ajout dans la liste des nouvelles
             }
         }
 
-        // 🔁 Retourne toutes les transactions du client, pas juste les nouvelles
-        return transactionRepository.findByClient(userId);
+        return newlyAddedTransactions; // ✅ Retourne uniquement les nouvelles transactions
     }
 
 

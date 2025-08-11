@@ -30,11 +30,11 @@ public class TransactionController {
         return ResponseEntity.ok(saved);
     }
 
-    @PostMapping("/upload")
+    @PostMapping("/upload") // correspond à /api/transactions/upload
     public ResponseEntity<List<Transaction>> uploadTransactions(@RequestParam("file") MultipartFile file) {
         try {
             List<Transaction> savedTransactions = transactionService.processExcelFile(file);
-            return ResponseEntity.ok(savedTransactions);
+            return ResponseEntity.ok(savedTransactions); // ✅ retourne juste les nouvelles transactions
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
