@@ -41,12 +41,26 @@ export class BudgetsComponent implements OnInit {
       console.error('Erreur lors du chargement des catégories:', error);
     });
   }
+loadBudgets() {
+  this.budgetService.getBudgets().subscribe({
+    next: (data) => {
+      // On met à jour chaque budget en backend pour recalculer realAmount
+      data.forEach(budget => {
+        this.budgetService.updateRealAmountFromTransactions(budget.id!).subscribe({
+          next: (updatedBudget) => {
+            // Remplace le budget dans la liste
+            this.budgets = this.budgets.map(b =>
+              b.id === updatedBudget.id ? updatedBudget : b
+            );
+          },
+          error: (err) => console.error(`Erreur MAJ budget ${budget.id}`, err)
+        });
+      });
 
-  loadBudgets() {
-  this.budgetService.getBudgets().subscribe(data => {
-    this.budgets = data;
-  }, error => {
-    console.error('Erreur chargement budgets:', error);
+      // Charge la liste initiale
+      this.budgets = data;
+    },
+    error: (err) => console.error('Erreur chargement budgets:', err)
   });
 }
 
@@ -126,5 +140,26 @@ onUpdateRealAmount(budgetId: number) {
       }
     });
   }
+ getCategoryIcon(category: string): string {
+  switch (category.toLowerCase()) {
+    case 'shopping': return 'fas fa-shopping-cart';
+    case 'car': return 'fas fa-car';
+    case 'sport': return 'fas fa-basketball-ball';
+    case 'animals': return 'fas fa-paw';
+    case 'health': return 'fas fa-heartbeat';
+    case 'food': return 'fas fa-utensils';
+    case 'technology': return 'fas fa-laptop-code';
+    case 'education': return 'fas fa-book';
+    case 'travel': return 'fas fa-plane';
+    case 'entertainment': return 'fas fa-film';
+    case 'finance': return 'fas fa-wallet';
+    case 'clothing': return 'fas fa-tshirt';
+    case 'beauty': return 'fas fa-magic';
+    case 'home': return 'fas fa-home';
+    case 'work': return 'fas fa-briefcase';
+    default: return 'fas fa-folder-open';
+  }
+}
+
 
 }

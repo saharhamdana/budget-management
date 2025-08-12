@@ -86,3 +86,48 @@ body {
     display: none; /* optionnel : cacher la sidebar sur mobile */
   }
 }
+:root {
+  --primary-color: #082c6c;
+  --accent-color: #f06c14;
+}
+.modal-custom {
+  max-width: 500px; /* largeur totale réduite */
+  margin: auto;
+}
+
+.category-card {
+  background: #fff;
+  border: 1px solid #eee;
+  transition: all 0.3s ease;
+}
+
+.category-card:hover {
+  background: #f8f9fa;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.category-card.selected {
+  border: 2px solid var(--accent-color);
+  background: rgba(240, 108, 20, 0.05);
+}
+
+.category-icon {
+  font-size: 28px;
+  color: var(--accent-color); /* Icône en orange */
+}
+
+.btn-primary {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.confirm-btn {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+.confirm-btn:hover {
+  background-color: #061f4a !important; /* plus foncé au hover */
+  border-color: #061f4a !important;
+}

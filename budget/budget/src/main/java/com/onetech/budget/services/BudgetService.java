@@ -83,6 +83,7 @@ public class BudgetService {
     }
 
     private void calculerDepassement(Budget budget) {
+
         Double amountPerMonth = budget.getAmountPerMonth();
         Double realAmount = budget.getRealAmount();
 
@@ -97,11 +98,13 @@ public class BudgetService {
         }
     }
     public Budget updateRealAmountFromTransactions(Long budgetId) {
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String userId = jwt.getSubject();
         Budget budget = budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new RuntimeException("Budget non trouvé"));
 
         // Supposons que tu as une méthode pour récupérer les transactions par catégorie
-        List<Transaction> transactions = transactionRepository.findByCategorie(budget.getCategorie());
+      List<Transaction> transactions = transactionRepository.findByCategorieAndClient(budget.getCategorie(), userId);
 
         double sumTransactions = transactions.stream()
                 .mapToDouble(Transaction::getMontant)

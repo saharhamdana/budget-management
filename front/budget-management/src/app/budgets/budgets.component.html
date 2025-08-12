@@ -1,70 +1,103 @@
 
     <!-- Main content -->
-    <div class="content-area flex-grow-1 overflow-auto p-4">
-      <div class="container budget-page mt-4">
+   <div class="content-area flex-grow-1 overflow-auto p-4">
         <h2 class="page-title mb-4">Mes Budgets</h2>
 
         <!-- Ajouter un budget -->
-        <div class="card p-4 mb-4 shadow-sm">
-          <h5 class="card-title">Ajouter un budget</h5>
-          <form (submit)="ajouterBudget()">
-            <div class="row g-3 align-items-end">
-              <div class="col-md-4">
-                <label for="categorie" class="form-label">Catégorie</label>
-                    <select id="categorie" class="form-select rounded shadow-sm" [(ngModel)]="newBudget.categorie" name="categorie" required>
-  <option value="" disabled selected>Choisir une catégorie</option>
-  <option *ngFor="let cat of categories" [ngValue]="cat">
-    {{ cat.nomAng }} ({{ cat.nomAr }})
-  </option>
-</select>
-              </div>
-              <div class="col-md-4">
-                <label for="montant" class="form-label">Montant</label>
-                <input type="number" id="montant" class="form-control" [(ngModel)]="newBudget.montant" name="montant" required />
-              </div>
-              <div class="col-md-4">
-                <button class="btn btn-orange w-100" type="submit">Ajouter</button>
-              </div>
-            </div>
-          </form>
-        </div>
-        
+<div class="card p-4 mb-4 shadow-sm border-0" style="border-radius: 12px;">
+  <h5 class="card-title text-primary fw-bold" style="color: var(--primary-color);">Ajouter un budget</h5>
+  
+  <form (submit)="ajouterBudget()">
+    <div class="row g-3 align-items-end">
+      
+      <div class="col-md-4">
+        <label for="categorie" class="form-label fw-semibold">Catégorie</label>
+        <select 
+          id="categorie" 
+          class="form-select rounded shadow-sm border-1" 
+          [(ngModel)]="newBudget.categorie" 
+          name="categorie" 
+          required>
+          <option value="" disabled selected>Choisir une catégorie</option>
+          <option *ngFor="let cat of categories" [ngValue]="cat">
+            {{ cat.nomAng }} ({{ cat.nomAr }})
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-4">
+        <label for="montant" class="form-label fw-semibold">Montant</label>
+        <input 
+          type="number" 
+          id="montant" 
+          class="form-control rounded shadow-sm border-1" 
+          [(ngModel)]="newBudget.montant" 
+          name="montant" 
+          required />
+      </div>
+
+      <div class="col-md-4">
+       <button 
+  class="btn btn-accent w-100 fw-semibold" 
+  type="submit" 
+  style="border-radius: 8px;">
+  Ajouter
+</button>
+
+      </div>
+
+    </div>
+  </form>
+</div>
 
         <!-- Liste des budgets -->
-<div class="card p-4 shadow-sm">
-  <h5 class="card-title">Liste des Budgets</h5>
-  <table class="table table-hover mt-3 align-middle">
-    <thead class="table-blue text-white">
+<div class="card p-4 shadow-sm border-0 rounded-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="card-title fw-bold text-primary mb-0">
+      <i class="fas fa-wallet me-2"></i> Liste des Budgets
+    </h5>
+  
+  </div>
+
+  <table class="table table-hover table-borderless align-middle">
+    <thead class="bg-primary text-white rounded-top">
       <tr>
-        <th>#</th>
         <th>Catégorie</th>
         <th>Montant Mensuel</th>
         <th>Dépenses Réelles</th>
-        <th>Actions</th>
+        <th class="text-center">Actions</th>
       </tr>
     </thead>
+
     <tbody>
-      <tr *ngFor="let budget of budgets; let i = index">
-        <td>{{ i + 1 }}</td>
-        <td>{{ budget.categorie.nomAng }}</td>
+      <tr *ngFor="let budget of budgets" class="align-middle">
+        
+        <!-- Catégorie avec icône -->
+        <td>
+          <span class="fw-semibold">
+            <i [ngClass]="getCategoryIcon(budget.categorie.nomAng)" class="me-2"></i>
+            {{ budget.categorie.nomAng }}
+          </span>
+        </td>
 
         <!-- Montant mensuel -->
         <td>
-          <span *ngIf="!budget.editing">{{ budget.amountPerMonth }} TND</span>
+          <span *ngIf="!budget.editing" class="text-secondary fw-medium">
+            {{ budget.amountPerMonth }} TND
+          </span>
           <input *ngIf="budget.editing"
-                type="number"
-                [(ngModel)]="budget.amountPerMonth"
-                class="form-control form-control-sm"
-                style="width:100px; display:inline-block;" />
+                 type="number"
+                 [(ngModel)]="budget.amountPerMonth"
+                 class="form-control form-control-sm w-auto d-inline-block" />
         </td>
 
-        <!-- Progress bar des dépenses réelles -->
-        <td style="min-width: 200px;">
-          <div class="progress" style="height: 20px; border-radius: 10px; overflow: hidden;">
-            <div class="progress-bar"
-                role="progressbar"
-                [ngClass]="budget.realAmount > budget.amountPerMonth ? 'bg-danger' : 'bg-success'"
-                [style.width.%]="(budget.realAmount / budget.amountPerMonth) * 100">
+        <!-- Barre de progression -->
+        <td style="min-width: 220px;">
+          <div class="progress rounded-pill" style="height: 20px;">
+            <div class="progress-bar fw-bold"
+                 role="progressbar"
+                 [ngClass]="budget.realAmount > budget.amountPerMonth ? 'bg-danger' : 'bg-success'"
+                 [style.width.%]="(budget.realAmount / budget.amountPerMonth) * 100">
               {{ budget.realAmount }} TND
             </div>
           </div>
@@ -74,27 +107,22 @@
         </td>
 
         <!-- Actions -->
-        <td>
+        <td class="text-center">
           <button *ngIf="!budget.editing"
-                  class="btn btn-sm btn-outline-primary me-2"
+                  class="btn btn-sm btn-outline-primary me-1"
                   (click)="enableEdit(budget)">
             <i class="fas fa-edit"></i>
           </button>
 
           <button *ngIf="budget.editing"
-                  class="btn btn-sm btn-success me-2"
+                  class="btn btn-sm btn-success me-1"
                   (click)="saveBudget(budget)">
             <i class="fas fa-check"></i>
           </button>
 
-          <button class="btn btn-sm btn-outline-danger me-2"
+          <button class="btn btn-sm btn-outline-danger"
                   (click)="supprimerBudget(budget.id)">
             <i class="fas fa-trash"></i>
-          </button>
-
-          <button class="btn btn-sm btn-outline-warning"
-                  (click)="onUpdateRealAmount(budget.id)">
-            🔄
           </button>
         </td>
       </tr>
@@ -102,6 +130,5 @@
   </table>
 </div>
 
-      </div>
-    </div>
+</div>
   

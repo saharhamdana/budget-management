@@ -42,3 +42,34 @@
   border-color: #1e3a8a;
   box-shadow: 0 0 6px #1e3a8a;
 }
+:root {
+  --primary-color: #082c6c;
+  --accent-color: #f06c14;
+}
+
+.btn-orange {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.btn-orange:hover {
+  background-color: #d95d0e;
+}
+.text-primary {
+  color: var(--primary-color) !important;
+}
+
+/* Table header en bleu */
+thead.bg-primary {
+  background-color: var(--primary-color) !important;
+}
+/* Bouton principal */
+.btn-accent {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+}
+
+.btn-accent:hover {
+  background-color: #d85d0f;
+}

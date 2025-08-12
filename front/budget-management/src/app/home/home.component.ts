@@ -218,5 +218,28 @@ isMobile(): boolean {
 
 
 
+getCategoryIcon(category: string): string {
+  switch (category.toLowerCase()) {
+    case 'shopping': return 'fas fa-shopping-cart';
+    case 'car': return 'fas fa-car';
+    case 'sport': return 'fas fa-basketball-ball';
+    case 'animals': return 'fas fa-paw';
+    case 'health': return 'fas fa-heartbeat';
+    case 'food': return 'fas fa-utensils';
+    case 'technology': return 'fas fa-laptop-code';
+    case 'education': return 'fas fa-book';
+    case 'travel': return 'fas fa-plane';
+    case 'entertainment': return 'fas fa-film';
+    case 'finance': return 'fas fa-wallet';
+    case 'clothing': return 'fas fa-tshirt';
+    case 'beauty': return 'fas fa-magic';
+    case 'home': return 'fas fa-home';
+    case 'work': return 'fas fa-briefcase';
+    default: return 'fas fa-folder-open';
+  }
+}
+
+
+
 }
 

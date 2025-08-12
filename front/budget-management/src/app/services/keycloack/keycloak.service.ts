@@ -33,4 +33,17 @@ export class KeycloakService {
   getUsername(): string {
     return this.keycloak.tokenParsed?.['preferred_username'] || '';
   }
+
+  getEmail(): string {
+    return this.keycloak.tokenParsed?.['email'] || '';
+  }
+
+  getFirstName(): string {
+    return this.keycloak.tokenParsed?.['given_name'] || '';
+  }
+
+  getLastName(): string {
+    return this.keycloak.tokenParsed?.['family_name'] || '';
+  }
+
 }
