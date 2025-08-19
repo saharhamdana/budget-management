@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class BudgetService {
@@ -22,17 +21,31 @@ public class BudgetService {
     private final TransactionRepository transactionRepository;
 
     @Autowired
-    public BudgetService(BudgetRepository budgetRepository, CategorieRepository categorieRepository, TransactionRepository transactionRepository) {
+    private EmailService emailService;
+
+    @Autowired
+    public BudgetService(BudgetRepository budgetRepository,
+                         CategorieRepository categorieRepository,
+                         TransactionRepository transactionRepository) {
         this.budgetRepository = budgetRepository;
         this.categorieRepository = categorieRepository;
         this.transactionRepository = transactionRepository;
     }
 
-    public Budget saveBudget(Budget budget) {
+    // --- Méthodes utilitaires pour JWT ---
+    private String getCurrentUserId() {
         Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = jwt.getSubject();
+        return jwt.getSubject();
+    }
 
-        budget.setUserId(userId);
+    private String getCurrentUserEmail() {
+        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return jwt.getClaimAsString("email");
+    }
+
+    // --- CRUD Budgets ---
+    public Budget saveBudget(Budget budget) {
+        budget.setUserId(getCurrentUserId());
 
         if (budget.getCategorie() == null || budget.getCategorie().getId() == null) {
             throw new RuntimeException("Catégorie obligatoire");
@@ -40,7 +53,6 @@ public class BudgetService {
 
         Categorie cat = categorieRepository.findById(budget.getCategorie().getId())
                 .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
-
         budget.setCategorie(cat);
 
         calculerDepassement(budget);
@@ -52,16 +64,18 @@ public class BudgetService {
         Budget existingBudget = budgetRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Budget introuvable"));
 
-        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = jwt.getSubject();
-
-        if (!existingBudget.getUserId().equals(userId)) {
+        if (!existingBudget.getUserId().equals(getCurrentUserId())) {
             throw new RuntimeException("Non autorisé à modifier ce budget");
         }
 
         existingBudget.setAmountPerMonth(updatedBudget.getAmountPerMonth());
         existingBudget.setRealAmount(updatedBudget.getRealAmount());
-        existingBudget.setCategorie(updatedBudget.getCategorie());
+
+        if (updatedBudget.getCategorie() != null && updatedBudget.getCategorie().getId() != null) {
+            Categorie cat = categorieRepository.findById(updatedBudget.getCategorie().getId())
+                    .orElseThrow(() -> new RuntimeException("Catégorie introuvable"));
+            existingBudget.setCategorie(cat);
+        }
 
         calculerDepassement(existingBudget);
 
@@ -69,9 +83,7 @@ public class BudgetService {
     }
 
     public List<Budget> getBudgetsForCurrentUser() {
-        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = jwt.getSubject();
-        return budgetRepository.findByUserId(userId);
+        return budgetRepository.findByUserId(getCurrentUserId());
     }
 
     public Budget findById(Long id) {
@@ -79,11 +91,18 @@ public class BudgetService {
     }
 
     public void deleteById(Long id) {
+        Budget budget = budgetRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Budget introuvable"));
+
+        if (!budget.getUserId().equals(getCurrentUserId())) {
+            throw new RuntimeException("Non autorisé à supprimer ce budget");
+        }
+
         budgetRepository.deleteById(id);
     }
 
+    // --- Calcul du dépassement et envoi de mail ---
     private void calculerDepassement(Budget budget) {
-
         Double amountPerMonth = budget.getAmountPerMonth();
         Double realAmount = budget.getRealAmount();
 
@@ -91,36 +110,97 @@ public class BudgetService {
             if (realAmount > amountPerMonth) {
                 budget.setDepassement(true);
                 budget.setValeurDepassement(realAmount - amountPerMonth);
+
+                String userEmail = getCurrentUserEmail();
+                if (userEmail != null) {
+                    emailService.sendEmail(
+                            userEmail,
+                            "Dépassement de budget",
+                            "Attention ! Vous avez dépassé votre budget pour la catégorie " +
+                                    budget.getCategorie().getNomAng() + ". Montant dépassé : " +
+                                    budget.getValeurDepassement() + " €"
+                    );
+                }
             } else {
                 budget.setDepassement(false);
                 budget.setValeurDepassement(0.0);
             }
         }
     }
+
     public Budget updateRealAmountFromTransactions(Long budgetId) {
-        Jwt jwt = (Jwt) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String userId = jwt.getSubject();
-        Budget budget = budgetRepository.findById(budgetId)
-                .orElseThrow(() -> new RuntimeException("Budget non trouvé"));
+        try {
+            // 🔑 Récupération du JWT
+            Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            if (!(principal instanceof Jwt jwt)) {
+                throw new RuntimeException("Utilisateur non authentifié ou JWT manquant");
+            }
 
-        // Supposons que tu as une méthode pour récupérer les transactions par catégorie
-      List<Transaction> transactions = transactionRepository.findByCategorieAndClient(budget.getCategorie(), userId);
+            String userId = jwt.getSubject();
+            if (userId == null) {
+                throw new RuntimeException("Impossible de récupérer l'ID utilisateur depuis le JWT");
+            }
 
-        double sumTransactions = transactions.stream()
-                .mapToDouble(Transaction::getMontant)
-                .sum();
+            // 🔎 Récupération du budget
+            Budget budget = budgetRepository.findById(budgetId)
+                    .orElseThrow(() -> new RuntimeException("Budget non trouvé pour l'ID: " + budgetId));
 
-        budget.setRealAmount(sumTransactions);
+            if (budget.getCategorie() == null) {
+                throw new RuntimeException("Le budget n'a pas de catégorie associée");
+            }
 
-        if (sumTransactions > budget.getAmountPerMonth()) {
-            budget.setDepassement(true);
-            budget.setValeurDepassement(sumTransactions - budget.getAmountPerMonth());
-        } else {
-            budget.setDepassement(false);
-            budget.setValeurDepassement(0.0);
+            // 💰 Récupération des transactions liées à la catégorie + utilisateur
+            List<Transaction> transactions = transactionRepository.findByCategorieAndClient(budget.getCategorie(), userId);
+            if (transactions == null) {
+                transactions = List.of(); // Sécurité
+            }
+
+            double sumTransactions = transactions.stream()
+                    .mapToDouble(Transaction::getMontant)
+                    .sum();
+
+            // Mise à jour du montant réel
+            budget.setRealAmount(sumTransactions);
+
+            // Sauvegarde de l’état précédent
+            boolean wasAlreadyExceeded = Boolean.TRUE.equals(budget.getDepassement());
+
+            // 📊 Vérification dépassement
+            if (budget.getAmountPerMonth() != null && sumTransactions > budget.getAmountPerMonth()) {
+                budget.setDepassement(true);
+                budget.setValeurDepassement(sumTransactions - budget.getAmountPerMonth());
+
+                // 📧 Envoi du mail uniquement si NOUVEAU dépassement
+                String userEmail = jwt.getClaimAsString("email");
+                if (!wasAlreadyExceeded && userEmail != null && !userEmail.isBlank()) {
+                    try {
+                        emailService.sendEmail(
+                                userEmail,
+                                "Budget Exceeded",
+                                "Warning! You have exceeded your budget for the category " +
+                                        budget.getCategorie().getNomAng() +
+                                        ". Exceeded amount: " + budget.getValeurDepassement() + " €"
+                        );
+                        System.out.println("📧 Mail envoyé à " + userEmail + " pour dépassement de budget.");
+                    } catch (Exception e) {
+                        System.err.println("❌ Error while sending the email: " + e.getMessage());
+                    }
+                }
+            } else {
+                budget.setDepassement(false);
+                budget.setValeurDepassement(0.0);
+            }
+
+            // Sauvegarde en BDD
+            Budget updatedBudget = budgetRepository.save(budget);
+            System.out.println("✅ Budget mis à jour : " + updatedBudget);
+
+            return updatedBudget;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Erreur lors de la mise à jour du montant réel du budget : " + e.getMessage());
         }
-
-        return budgetRepository.save(budget);
     }
 
 

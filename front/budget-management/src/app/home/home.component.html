@@ -1,86 +1,74 @@
-
-
-    <!-- Main content (scrollable) -->
-    <div class="content-area flex-grow-1 overflow-auto p-4">
-      
-      <!-- Upload Section -->
-      <div class="card custom-card mb-4 shadow-sm">
-        <div class="card-body">
-          <h5 class="section-title mb-3">📤 Upload Excel File</h5>
-          <div class="input-group">
-            <input type="file" class="form-control" id="inputGroupFile02" (change)="handleFileInput($event)" accept=".xlsx, .xls" />
-            <label class="input-group-text btn btn-accent text-white" for="inputGroupFile02">Upload</label>
-          </div>
-        </div>
+<!-- Main content (scrollable) -->
+<div class="content-area flex-grow-1 overflow-auto p-4">
+  
+  <!-- Upload Section -->
+  <div class="card custom-card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="section-title mb-3">📤 Upload Excel File</h5>
+      <div class="input-group">
+        <input type="file" class="form-control" id="inputGroupFile02" (change)="handleFileInput($event)" accept=".xlsx, .xls" />
+        <label class="input-group-text btn btn-accent text-white" for="inputGroupFile02">Upload</label>
       </div>
-
-      <!-- Filter Section -->
-      <div class="card custom-card mb-4 shadow-sm">
-        <div class="card-body">
-          <h5 class="section-title mb-3">🔍 Filters</h5>
-          <div class="row g-3">
-            <div class="col-md-4">
-              <input type="text" class="form-control" placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTransactions()" />
-            </div>
-            <div class="col-md-4">
-              <input type="text" class="form-control" placeholder="Global filter..." [(ngModel)]="globalFilter" (ngModelChange)="filterTransactions()" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      
-      <!-- Transactions Table -->
-      <div *ngIf="filteredTransactions.length > 0; else noData" class="card custom-card shadow-sm">
-        <div class="card-body">
-          <h5 class="section-title mb-3">📊 Transactions</h5>
-          <div class="table-responsive">
-            <table class="table table-striped table-hover">
-              <thead class="table-primary">
-                <tr>
-                  <th *ngFor="let key of getDisplayKeys(filteredTransactions[0])">{{ key }}</th>
-                </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let row of filteredTransactions">
-  <td *ngFor="let key of getDisplayKeys(row)">
-    <ng-container *ngIf="key !== 'categorie'">
-      {{ row[key] }}
-    </ng-container>
-    <ng-container *ngIf="key === 'categorie'">
-      <ng-container *ngIf="!row[key]">
-  <button class="btn btn-sm btn-outline-primary" (click)="affecterCategorie(row)">Affecter</button>
-</ng-container>
-      <ng-container *ngIf="row[key]">
-        {{ row[key] }}
-      </ng-container>
-    </ng-container>
-  </td>
-</tr>
-
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- No Data Template -->
-      <ng-template #noData>
-        <div class="alert alert-info text-center">No data loaded.</div>
-      </ng-template>
     </div>
- 
+  </div>
 
+  <!-- Filter Section -->
+  <div class="card custom-card mb-4 shadow-sm">
+    <div class="card-body">
+      <h5 class="section-title mb-3">🔍 Filters</h5>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Filter by name" [(ngModel)]="filterName" (ngModelChange)="filterTransactions()" />
+        </div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" placeholder="Global filter..." [(ngModel)]="globalFilter" (ngModelChange)="filterTransactions()" />
+        </div>
+      </div>
+    </div>
+  </div>
 
-    <!-- MODAL POUR L'AFFECTATION -->
+  <!-- Transactions Table (Only shows transactions without categories) -->
+  <div *ngIf="filteredTransactions.length > 0; else noData" class="card custom-card shadow-sm">
+    <div class="card-body">
+      <h5 class="section-title mb-3">📊 Transactions Without Categories</h5>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead class="table-primary">
+            <tr>
+              <th *ngFor="let key of getDisplayKeys(filteredTransactions[0])">{{ key }}</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of filteredTransactions">
+              <td *ngFor="let key of getDisplayKeys(row)">
+                {{ row[key] }}
+              </td>
+              <td>
+                <button class="btn btn-sm btn-outline-primary" (click)="affecterCategorie(row)">Assign Category</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Data Template -->
+  <ng-template #noData>
+    <div class="alert alert-info text-center">No transactions without categories.</div>
+  </ng-template>
+</div>
+
+<!-- MODAL FOR CATEGORY ASSIGNMENT -->
 <div class="modal fade" id="categorieModal" tabindex="-1" aria-labelledby="categorieModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-md"> <!-- modal-md pour plus petit -->
+  <div class="modal-dialog modal-md">
     <div class="modal-content modal-custom">
       
       <!-- HEADER -->
       <div class="modal-header" style="background-color: var(--primary-color); color: white;">
-        <h5 class="modal-title" id="categorieModalLabel">Affecter une catégorie</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fermer"></button>
+        <h5 class="modal-title" id="categorieModalLabel">Assign a Category</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
       <!-- BODY -->
@@ -100,14 +88,10 @@
 
       <!-- FOOTER -->
       <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-        <button class="btn btn-primary confirm-btn" (click)="confirmerAffectation()">Confirmer</button>
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button class="btn btn-primary confirm-btn" (click)="confirmerAffectation()">Confirm</button>
       </div>
 
     </div>
   </div>
 </div>
-
-
-
-

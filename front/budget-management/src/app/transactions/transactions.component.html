@@ -1,16 +1,16 @@
 <div class="transactions-container">
-  <h2>Mes Transactions</h2>
+  <h2>My Transactions</h2>
 
   <table class="table table-striped">
     <thead>
       <tr>
         <th>ID</th>
-        <th>Montant</th>
-        <th>Date Opération</th>
-        <th>Date Valeur</th>
+        <th>Amount</th>
+        <th>Transaction Date</th>
+        <th>Value Date</th>
         <th>Description</th>
-        <th>Référence</th>
-        <th>Catégorie</th>
+        <th>Reference</th>
+        <th>Category</th>
       </tr>
     </thead>
     <tbody>
@@ -22,11 +22,11 @@
         <td>{{ transaction.description }}</td>
         <td>{{ transaction.reference }}</td>
         <td>
-{{ transaction.categorie?.nomAng || 'Non catégorisé' }}
+          {{ transaction.categorie?.nomAng || 'Uncategorized' }}
         </td>
       </tr>
     </tbody>
   </table>
 
-  <p *ngIf="transactions.length === 0">Aucune transaction trouvée.</p>
+  <p *ngIf="transactions.length === 0">No transactions found.</p>
 </div>

@@ -17,6 +17,8 @@ export class TransactionsComponent implements OnInit {
   ngOnInit(): void {
     this.transactionService.getTransactionsByUser().subscribe((data) => {
       this.transactions = data;
+      console.log("data222",data);
+      
     });
   }
 }
