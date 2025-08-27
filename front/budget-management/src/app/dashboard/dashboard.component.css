@@ -1,0 +1,146 @@
+:root {
+  --primary-color: #082c6c; /* Dark navy */
+  --accent-color: #f06c14; /* Dark orange */
+  --light-bg: #f5f7fa;
+  --card-bg: #ffffff;
+  --text-dark: #1a1a1a;
+  --border-radius: 12px;
+  --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Loading */
+.loading {
+  text-align: center;
+  font-size: 1.2rem;
+  padding: 20px;
+  color: var(--primary-color);
+}
+
+/* Page title */
+.page-title {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+/* Total transactions */
+.total-transactions {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  color: var(--accent-color);
+}
+
+/* Summary cards */
+.summary-cards {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.card {
+  flex: 1;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.card h4 {
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Charts grid */
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.chart-container {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.chart-container h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+
+/* Table */
+.table-section {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.table-section h3 {
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: var(--light-bg);
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+}
+
+th {
+  color: var(--primary-color);
+}
+
+td {
+  color: var(--text-dark);
+  border-top: 1px solid #ddd;
+}
+.dashboard-charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.chart-container {
+  background: var(--card-bg, #ffffff);
+  border-radius: var(--border-radius, 12px);
+  padding: 20px;
+  box-shadow: var(--shadow, 0 4px 12px rgba(0,0,0,0.1));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.chart-container h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: var(--primary-color, #082c6c);
+}
+
+/* ✅ Fixer la taille des canvases */
+.chart-container canvas {
+  width: 100% !important;
+  height: 350px !important; /* tu peux ajuster (300-400px) */
+  max-height: 400px;
+}

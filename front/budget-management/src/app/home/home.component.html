@@ -30,27 +30,36 @@
   <!-- Transactions Table (Only shows transactions without categories) -->
   <div *ngIf="filteredTransactions.length > 0; else noData" class="card custom-card shadow-sm">
     <div class="card-body">
-      <h5 class="section-title mb-3">📊 Transactions Without Categories</h5>
+      <h5 class="section-title mb-3">📊 Transactions </h5>
       <div class="table-responsive">
-        <table class="table table-striped table-hover">
-          <thead class="table-primary">
-            <tr>
-              <th *ngFor="let key of getDisplayKeys(filteredTransactions[0])">{{ key }}</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let row of filteredTransactions">
-              <td *ngFor="let key of getDisplayKeys(row)">
-                {{ row[key] }}
-              </td>
-              <td>
-                <button class="btn btn-sm btn-outline-primary" (click)="affecterCategorie(row)">Assign Category</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+  <table class="table table-striped table-hover">
+    <thead class="table-primary">
+      <tr>
+        <th *ngFor="let key of getDisplayKeys(filteredTransactions[0])">
+          {{ key }}
+        </th>
+        <!-- On supprime la colonne Action -->
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of filteredTransactions">
+        <td *ngFor="let key of getDisplayKeys(row)">
+          <!-- Vérifie si c’est la colonne categorie -->
+          <ng-container *ngIf="key === 'categorie'; else normalCell">
+            <button class="btn btn-sm btn-outline-primary"
+                    (click)="affecterCategorie(row)">
+              Assign Category
+            </button>
+          </ng-container>
+          <ng-template #normalCell>
+            {{ row[key] }}
+          </ng-template>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
     </div>
   </div>
 

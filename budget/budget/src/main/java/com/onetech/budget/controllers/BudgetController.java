@@ -1,5 +1,7 @@
 package com.onetech.budget.controllers;
 
+import com.onetech.budget.DTO.BudgetStatus;
+import com.onetech.budget.DTO.BudgetSummary;
 import com.onetech.budget.DTO.RealAmountDTO;
 import com.onetech.budget.models.Budget;
 
@@ -68,6 +70,37 @@ public class BudgetController {
     public ResponseEntity<Budget> updateRealAmountFromTransactions(@PathVariable Long id) {
         Budget updatedBudget = budgetService.updateRealAmountFromTransactions(id);
         return ResponseEntity.ok(updatedBudget);
+    }
+    @GetMapping("/summary")
+    public ResponseEntity<BudgetSummary> getBudgetSummary(@RequestParam String userId) {
+
+        List<Budget> budgets = budgetRepository.findByUserId(userId);
+
+        long exceededBudgets = budgets.stream()
+                .filter(Budget::getDepassement)
+                .count();
+
+        Double totalAllocated = budgets.stream()
+                .mapToDouble(Budget::getAmountPerMonth)
+                .sum();
+
+        List<BudgetStatus> budgetStatuses = budgets.stream()
+                .map(budget -> new BudgetStatus(
+                        budget.getCategorie(),
+                        budget.getAmountPerMonth(),
+                        budget.getRealAmount(),
+                        budget.getDepassement()
+                ))
+                .toList();
+
+        BudgetSummary summary = new BudgetSummary(
+                budgets.size(),
+                (int) exceededBudgets,
+                totalAllocated,
+                budgetStatuses
+        );
+
+        return ResponseEntity.ok(summary);
     }
 
 

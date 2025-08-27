@@ -1,1 +1,70 @@
-<p>dashboard works!</p>
+<div *ngIf="isLoading()" class="loading">
+  Loading dashboard...
+</div>
+
+<div *ngIf="!isLoading() && summary" class="dashboard">
+
+  <h1 class="page-title">Dashboard</h1>
+  <!-- <h2 class="total-transactions">Total Transactions: {{ summary.totalTransactions }} €</h2> -->
+
+  <!-- Summary Cards -->
+  <div class="summary-cards">
+    <div class="card">
+      <h4>Total Budget</h4>
+      <p>{{ summary.totalBudget }} €</p>
+    </div>
+    <div class="card">
+      <h4>Total Spent</h4>
+      <p>{{ summary.totalSpent }} €</p>
+    </div>
+    <div class="card">
+      <h4>Difference</h4>
+      <p [style.color]="summary.totalSpent > summary.totalBudget ? 'red' : 'green'">
+        {{ summary.totalBudget - summary.totalSpent }} €
+      </p>
+    </div>
+  </div>
+
+  <!-- Charts -->
+  <div class="dashboard-charts">
+    
+
+    <div class="chart-container">
+      <h3>Budget vs Actual per Category</h3>
+      <canvas #budgetVsRealChart></canvas>
+    </div>
+
+    <div class="chart-container">
+      <h3>Category Breakdown</h3>
+      <canvas #byCategorieChart></canvas>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div *ngIf="summary.budgetVsReal?.length" class="table-section">
+    <h3>Details per Category</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Budget</th>
+          <th>Actual</th>
+          <th>Exceeded</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of summary.budgetVsReal">
+          <td>{{ item.categorie }}</td>
+          <td>{{ item.budget }} €</td>
+          <td>{{ item.realSpent }} €</td>
+          <td>
+            <span [style.color]="item.depassement ? 'red' : 'green'">
+              {{ item.depassement ? 'Yes' : 'No' }}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
